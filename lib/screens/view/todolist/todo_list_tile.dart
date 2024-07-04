@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../todo.dart';
+import 'todo.dart';
 
 class TodoListTile extends StatelessWidget {
   final Todo todo;

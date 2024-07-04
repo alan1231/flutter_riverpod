@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/screens/flavors_list_screen.dart';
-import 'package:flutter_demo/screens/todo_list_screen.dart';
+import 'package:flutter_demo/screens/view/flavors/flavors_list_screen.dart';
+import 'package:flutter_demo/screens/view/todolist/todo_list_screen.dart';
 import 'package:flutter_demo/tools/smart_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,8 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/api/FlavorsNotifier.dart';
+import 'package:flutter_demo/screens/view/todolist/todolist.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import '../todolist.dart'; // 假设 flavorsProvider 定义在这个文件中
 
 class DialogManager {
   static void showAddTodoDialog(BuildContext context, WidgetRef ref) {
@@ -90,35 +92,76 @@ class DialogManager {
   }
 
   static void showDeleteFlavorDialog(BuildContext context, WidgetRef ref, String flavorId) {
-    showDialog(
-      context: context,
+    SmartDialog.show(
+      alignment: Alignment.center,
+      builder: (_) => AlertDialog(
+        title: Text('Delete Flavor with id $flavorId'),
+        content: const Text('Are you sure you want to delete this flavor?'),
+        actions: [
+          TextButton(
+            onPressed: () => SmartDialog.dismiss(), // 取消操作，关闭对话框
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final notifier = ref.read(flavorsProvider.notifier);
+              final success = await notifier.deleteFlavor(flavorId);
+              SmartDialog.dismiss(); // 关闭对话框
+              if (success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Flavor deleted successfully')),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Failed to delete flavor')),
+                );
+              }
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static void showConsumer({
+    required Widget Function(BuildContext context, WidgetRef ref) builder,
+    bool backDismiss = true,
+    bool clickMaskDismiss = true,
+    double blurX = 10.0,
+    double blurY = 10.0,
+    Color maskColor = Colors.transparent,
+  }) {
+    SmartDialog.show(
+      maskColor: Colors.transparent,
+      useAnimation: false,
+      backDismiss: backDismiss,
+      clickMaskDismiss: clickMaskDismiss,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Delete Flavor with id $flavorId'),
-          content: const Text('Are you sure you want to delete this flavor?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(), // 取消操作，关闭对话框
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final notifier = ref.read(flavorsProvider.notifier);
-                final success = await notifier.deleteFlavor(flavorId);
-                Navigator.of(context).pop(); // 关闭对话框
-                if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Flavor deleted successfully')),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Failed to delete flavor')),
-                  );
-                }
-              },
-              child: const Text('Delete'),
-            ),
-          ],
+        return GestureDetector(
+          onTap: () {
+            if (clickMaskDismiss) {
+              SmartDialog.dismiss();
+            }
+          },
+          child: Stack(
+            children: [
+              BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: blurX, sigmaY: blurY),
+                child: Container(
+                  color: maskColor,
+                ),
+              ),
+              Center(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Consumer(builder: (context, ref, child) {
+                    return builder(context, ref);
+                  }),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
