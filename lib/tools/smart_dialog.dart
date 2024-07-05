@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo/api/FlavorsNotifier.dart';
 import 'package:flutter_demo/screens/view/todolist/todolist.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 class DialogManager {
@@ -123,7 +124,7 @@ class DialogManager {
       ),
     );
   }
-
+  /// 显示带有高斯模糊背景效果
   static void showConsumer({
     required Widget Function(BuildContext context, WidgetRef ref) builder,
     bool backDismiss = true,
@@ -138,30 +139,35 @@ class DialogManager {
       backDismiss: backDismiss,
       clickMaskDismiss: clickMaskDismiss,
       builder: (context) {
-        return GestureDetector(
-          onTap: () {
-            if (clickMaskDismiss) {
-              SmartDialog.dismiss();
-            }
+        return Consumer(
+          builder: (context, ref, _) {
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: EdgeInsets.only(bottom: 20.h),
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.8,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.0), // 圆角半径
+                  border:
+                      Border.all(color: Colors.amber, width: 10.w), // 替换成你的颜色
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3), // 阴影偏移量
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0), // 确保子组件也有圆角
+                  child: builder(context, ref),
+                ),
+              ),
+            );
           },
-          child: Stack(
-            children: [
-              BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: blurX, sigmaY: blurY),
-                child: Container(
-                  color: maskColor,
-                ),
-              ),
-              Center(
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Consumer(builder: (context, ref, child) {
-                    return builder(context, ref);
-                  }),
-                ),
-              ),
-            ],
-          ),
         );
       },
     );

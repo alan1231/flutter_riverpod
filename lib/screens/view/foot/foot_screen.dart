@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/router/app_routes.dart';
 import 'package:flutter_demo/screens/view/flavors/flavors_list_screen.dart';
+import 'package:flutter_demo/tools/app_colors.dart';
 import 'package:flutter_demo/tools/smart_dialog.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 class FootScreen extends StatelessWidget {
   @override
@@ -36,12 +39,12 @@ class FootScreen extends StatelessWidget {
                   print('商城按钮被点击');
                 }),
                 _buildButton(context, Icons.card_giftcard, '赠禮', () {
-                  print('赠礼按钮被点击');
+                  context.push(AppRoutes.todo);
                 }),
                 _buildButton(context, Icons.group, '公會', () {
                   DialogManager.showConsumer(
                     builder: (context, ref) {
-                      return const FlavorsListScreen();
+                      return FlavorsListScreen(showAppBar: false);
                     },
                   );
                 }),

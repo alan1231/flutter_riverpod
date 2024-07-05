@@ -44,7 +44,7 @@ class _TabbarScreenState extends ConsumerState<TabbarScreen> {
           index: _selectedIndex,
           children: [
             TodoListScreen(),
-            const FlavorsListScreen(),
+            FlavorsListScreen(),
           ],
         ),
         bottomNavigationBar: Container(

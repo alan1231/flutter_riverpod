@@ -5,7 +5,7 @@ class ApiService {
   final Dio _dio;
 
   static final ApiService _instance = ApiService._internal(Dio());
-  static const https = "http://localhost:8000/";
+  static const https = "http://127.0.0.1:8000/";
   factory ApiService() {
     return _instance;
   }
